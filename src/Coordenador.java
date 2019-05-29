@@ -20,7 +20,19 @@ public class Coordenador {
         this.coordenadorIP = coordenadorIP;
         relogio = new Relogio();
     }
+	
+	public int getPorta() {
+		return this.porta;
+	}
+	
+	public String getServidor(int i) {
+		return (this.servidores.get(i));
+	}
 
+	public int getSize() {
+		return this.servidores.size();
+	}
+	
     public ArrayList<Long> getTempoServidores() throws IOException {
         ArrayList<Long> temposServidores = new ArrayList<>();
 
@@ -64,16 +76,6 @@ public class Coordenador {
         System.out.println("Servidor: " + coordenadorIP + "Tempo: " + tempos.get(tempos.size() - 1) + " Data: " + new Date(tempos.get(tempos.size() - 1)));
         for (int i = 0; i < servidores.size(); ++i) {
             System.out.println("Servidor: " + servidores.get(i) + "Tempo: " + tempos.get(i) + " Data: " + new Date(tempos.get(i)));
-        }
-    }
-
-    public static void main(String[] args) {
-        ArrayList<String> servidores = new ArrayList<>();
-        servidores.add("192.168.0.101");
-        servidores.add("192.168.0.102");
-        Coordenador coordenador = new Coordenador("192.168.0.100", servidores, 7013);
-        for (int i = 0; i < coordenador.servidores.size(); i++) {
-            System.out.println(coordenador.servidores.get(i) + "  " + coordenador.porta);
         }
     }
 }
