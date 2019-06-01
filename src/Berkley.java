@@ -1,17 +1,21 @@
+import java.io.IOException;
 import java.util.ArrayList;
 
 public class Berkley{
 
-	public static void main(String[] args) {
+    public static void main(String[] args) {
 
-		ArrayList<String> servidores = new ArrayList<>();
-		servidores.add("192.168.0.101");
-		servidores.add("192.168.0.102");
-		Coordenador coordenador = new Coordenador("192.168.0.100", servidores, 7013);
+        ArrayList<String> servidores = new ArrayList<>();
+        servidores.add("192.168.0.100");
+        servidores.add("192.168.0.102");
+        Coordenador coordenador = new Coordenador("192.168.0.100", servidores, 5002);
 
-		for (int i = 0; i < coordenador.getSize(); i++) {
-			System.out.println(coordenador.getServidor(i) + "  " + coordenador.getPorta());
-		}
-	}
-
+        try {
+            ArrayList<Long> tempos = coordenador.getTempoServidores();
+            coordenador.escreverTempo(tempos);
+        }
+        catch(IOException ioe) {
+            System.out.println("ERRO");
+        }
+    }
 }

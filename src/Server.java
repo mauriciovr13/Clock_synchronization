@@ -1,54 +1,42 @@
-import java.io.*; 
-import java.net.*; 
-  
-class Server { 
-  public static void main(String args[]) throws Exception 
-    { 
-     try
-     { 
-      DatagramSocket serverSocket = new DatagramSocket(5002);
-  
-      byte[] receiveData = new byte[1024]; 
-      byte[] sendData  = new byte[1024]; 
-  
-      while(true) 
-        { 
-  
-          receiveData = new byte[1024]; 
+import java.net.DatagramPacket;
+import java.net.DatagramSocket;
+import java.net.InetAddress;
+import java.net.SocketException;
+import java.nio.ByteBuffer;
+import java.nio.charset.StandardCharsets;
 
-          DatagramPacket receivePacket = 
-             new DatagramPacket(receiveData, receiveData.length); 
+class Server {
+    public static void main(String[] args) throws Exception {
+        Relogio relogio = new Relogio();
+        try {
+            DatagramSocket serverSocket = new DatagramSocket(5002);
 
+            byte[] receiveData = new byte[1024];
+            byte[] sendData  = new byte[1024];
 
-          serverSocket.receive(receivePacket); 
+            while(true) {
+                DatagramPacket pacoteReceber = new DatagramPacket(receiveData, receiveData.length);
+                serverSocket.receive(pacoteReceber);
+                String mensagem = new String(pacoteReceber.getData(), pacoteReceber.getOffset(), pacoteReceber.getLength(), StandardCharsets.UTF_8);
+                InetAddress enderecoIP = pacoteReceber.getAddress();
 
-          String message = new String(receivePacket.getData()); 
-  
-          InetAddress IPAddress = receivePacket.getAddress(); 
-		
-			if (message.equals("TEMPO")) {
-				DatagramPacket enviar;
-				double tempo = System.nanoTime();
-	          	int port = receivePacket.getPort(); 
-				String mensagem = Double.toString(tempo);
-				byte[] bytesParaEnviar = mensagem.getBytes();
-				
-				enviar = new DatagramPacket(bytesParaEnviar, bytesParaEnviar.length, IPAddress,port);
-			
-			serverSocket.send(enviar);
-			} else {
+                if (mensagem.equals("TEMPO")) {
+                    DatagramPacket enviar;
+                    long tempo = relogio.getRelogio();
+                    int porta = pacoteReceber.getPort();
+                    byte[] bytesParaEnviar = ByteBuffer.allocate(Long.BYTES).putLong(tempo).array();
 
-				//arruma o relogio
-			}
-  
-        } 
-
-     }
-      catch (SocketException ex) {
-        System.out.println(ex);
-        System.exit(1);
-      }
-
-    } 
-}  
-
+                    System.out.println(tempo);
+                    enviar = new DatagramPacket(bytesParaEnviar, bytesParaEnviar.length, enderecoIP, porta);
+                    serverSocket.send(enviar);
+                }
+                else {
+                    //arruma o relogio
+                }
+            }
+        }
+        catch (SocketException ex) {
+            System.out.println("ERRO");
+        }
+    }
+}
