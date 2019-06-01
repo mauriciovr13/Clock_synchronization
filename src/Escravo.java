@@ -5,7 +5,7 @@ import java.net.SocketException;
 import java.nio.ByteBuffer;
 import java.nio.charset.StandardCharsets;
 
-class Server {
+class Escravo{
     public static void main(String[] args) throws Exception {
         Relogio relogio = new Relogio();
         try {
