@@ -69,14 +69,42 @@ public class Coordenador {
         } while(!todosPacotesRecebidos);
         socket.close();
         temposServidores.add(relogio.getRelogio());
+        
 
         return temposServidores;
     }
 
+    public void ajustaTempo(ArrayList<Long> tempos, long media) throws IOException {
+        DatagramSocket socket = new DatagramSocket();
+        socket.setSoTimeout(TIMEOUT);
+        for(int i = 0; i < tempos.size()-1; i++) {
+            long desvio = media - tempos.get(i);
+
+            String mensagem = Long.toString(desvio);
+            byte[] bytesParaEnviar = mensagem.getBytes(StandardCharsets.UTF_8);
+                        
+            DatagramPacket pacoteEnviar;
+
+            InetAddress enderecoServer = InetAddress.getByName(servidores.get(i));
+
+            pacoteEnviar = new DatagramPacket(bytesParaEnviar, bytesParaEnviar.length, enderecoServer, porta);
+
+            socket.send(pacoteEnviar);
+            //long novoRelogio = tempos.get(i) + desvio;
+            tempos.set(i, tempos.get(i) + desvio);
+        }
+        socket.close();
+        int tam = tempos.size() - 1;
+        relogio.ajustaRelogio(media - tempos.get(tam));
+        long desvio = media - tempos.get(tam);
+        tempos.set(tam, tempos.get(tam) + desvio);
+        //System.out.println(relogio.getDate());
+    }
+
     public void escreverTempo(ArrayList<Long> tempos) {
-        System.out.println("Servidor: " + coordenadorIP + " Tempo: " + tempos.get(tempos.size() - 1) + " Data: " + new Date(tempos.get(tempos.size() - 1)));
+        System.out.println("Coordenador: " + coordenadorIP + " Tempo: " + tempos.get(tempos.size() - 1) + " Data: " + new Date(tempos.get(tempos.size() - 1)));
         for (int i = 0; i < servidores.size(); ++i) {
-            System.out.println("Servidor: " + servidores.get(i) + " Tempo: " + tempos.get(i) + " Data: " + new Date(tempos.get(i)));
+            System.out.println("Escravo: " + servidores.get(i) + " Tempo: " + tempos.get(i) + " Data: " + new Date(tempos.get(i)));
         }
     }
 }
