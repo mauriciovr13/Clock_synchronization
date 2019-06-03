@@ -8,32 +8,39 @@ import java.nio.charset.StandardCharsets;
 class Escravo{
     public static void main(String[] args) throws Exception {
         Relogio relogio = new Relogio();
+        System.out.println("Servidor iniciado!");
         try {
             DatagramSocket serverSocket = new DatagramSocket(5002);
 
             byte[] receiveData = new byte[1024];
-            byte[] sendData  = new byte[1024];
+            byte[] bytesParaEnviar;
 
             while(true) {
                 DatagramPacket pacoteReceber = new DatagramPacket(receiveData, receiveData.length);
+                DatagramPacket pacoteEnviar;
+
                 serverSocket.receive(pacoteReceber);
                 String mensagem = new String(pacoteReceber.getData(), pacoteReceber.getOffset(), pacoteReceber.getLength(), StandardCharsets.UTF_8);
+
                 InetAddress enderecoIP = pacoteReceber.getAddress();
+                int porta = pacoteReceber.getPort();
 
                 if (mensagem.equals("TEMPO")) {
-                    DatagramPacket enviar;
                     long tempo = relogio.getRelogio();
-                    int porta = pacoteReceber.getPort();
-                    byte[] bytesParaEnviar = ByteBuffer.allocate(Long.BYTES).putLong(tempo).array();
+                    bytesParaEnviar = ByteBuffer.allocate(Long.BYTES).putLong(tempo).array();
 
-                    System.out.println(tempo);
-                    enviar = new DatagramPacket(bytesParaEnviar, bytesParaEnviar.length, enderecoIP, porta);
-                    serverSocket.send(enviar);
+                    pacoteEnviar = new DatagramPacket(bytesParaEnviar, bytesParaEnviar.length, enderecoIP, porta);
+                    serverSocket.send(pacoteEnviar);
                 }
                 else {
-                	relogio.ajustaRelogio(Long.parseLong(mensagem));
-					System.out.println(relogio.getDate());
-				}
+                    relogio.ajustaRelogio(Long.parseLong(mensagem));
+                    System.out.println(relogio.getDate());
+
+                    String mensagemEnviar = "OK";
+                    bytesParaEnviar = mensagemEnviar.getBytes(StandardCharsets.UTF_8);
+                    pacoteEnviar = new DatagramPacket(bytesParaEnviar, bytesParaEnviar.length, enderecoIP, porta);
+                    serverSocket.send(pacoteEnviar);
+                }
             }
         }
         catch (SocketException ex) {

@@ -14,23 +14,21 @@ public class Berkley{
             ArrayList<Long> tempos = coordenador.getTempoServidores();
             System.out.println("Tempo antes do ajuste");
             coordenador.escreverTempo(tempos);
-            long media =  calculaMedia(tempos);
+            long media = calcularMedia(tempos);
             coordenador.ajustaTempo(tempos, media);
             System.out.println("\nTempo depois do ajuste");
             coordenador.escreverTempo(tempos);
-
-
         }
         catch(IOException ioe) {
             System.out.println("ERRO");
         }
     }
 
-    public static long calculaMedia(ArrayList<Long> tempos){
+    private static long calcularMedia(ArrayList<Long> tempos){
         long media = 0;
-        for(int i = 0; i < tempos.size(); i++) {
-            media += tempos.get(i);
+        for (Long tempo : tempos) {
+            media += tempo;
         }
-        return media/tempos.size();
+        return media / tempos.size();
     }
 }
