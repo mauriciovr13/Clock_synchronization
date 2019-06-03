@@ -44,10 +44,13 @@ public class Coordenador extends Thread {
                 pacoteEnviar = new DatagramPacket(bytesParaEnviar, bytesParaEnviar.length, enderecoServer, porta);
                 pacoteReceber = new DatagramPacket(bytesParaReceber, bytesParaReceber.length);
 
+                long tempoInicio = System.currentTimeMillis();
                 socket.send(pacoteEnviar);
                 try {
                     socket.receive(pacoteReceber);
-                    temposServidores.add(ByteBuffer.wrap(pacoteReceber.getData()).getLong());
+                    long tempoFinal = System.currentTimeMillis();
+                    long tempoTotal = ByteBuffer.wrap(pacoteReceber.getData()).getLong() - ((tempoFinal - tempoInicio) / 2);
+                    temposServidores.add(tempoTotal);
                 } catch (InterruptedIOException e) {
                     todosPacotesRecebidos = false;
                     System.out.println("Erro na comunicação com o servidor: " + servidores.get(i) + ". Tentando nova execução...");
