@@ -6,9 +6,9 @@ public class Berkley{
     public static void main(String[] args) {
 
         ArrayList<String> servidores = new ArrayList<>();
-        servidores.add("127.0.0.1");
-        servidores.add("192.168.0.101");
-        Coordenador coordenador = new Coordenador("192.168.0.13", servidores, 5002);
+        servidores.add("192.168.0.103");
+        servidores.add("192.168.0.104");
+        Coordenador coordenador = new Coordenador("192.168.0.100", servidores, 5002);
 
         try {
             ArrayList<Long> tempos = coordenador.getTempoServidores();
@@ -20,7 +20,7 @@ public class Berkley{
             coordenador.escreverTempo(tempos);
         }
         catch(IOException ioe) {
-            System.out.println("ERRO");
+            System.out.println("Erro com o socket.");
         }
     }
 

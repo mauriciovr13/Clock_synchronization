@@ -8,10 +8,10 @@ import java.nio.charset.StandardCharsets;
 class Escravo{
     public static void main(String[] args) throws Exception {
         Relogio relogio = new Relogio();
-        System.out.println("Servidor iniciado!");
-        try {
-            DatagramSocket serverSocket = new DatagramSocket(5002);
+        System.out.println("Servidor iniciado!\nHora: " + relogio.getRelogio() + "\nData: " + relogio.getDate());
 
+        DatagramSocket serverSocket = new DatagramSocket(5002);
+        try {
             byte[] receiveData = new byte[1024];
             byte[] bytesParaEnviar;
 
@@ -45,6 +45,9 @@ class Escravo{
         }
         catch (SocketException ex) {
             System.out.println("ERRO");
+        }
+        finally {
+            serverSocket.close();
         }
     }
 }

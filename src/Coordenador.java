@@ -8,7 +8,7 @@ import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.Date;
 
-public class Coordenador {
+public class Coordenador extends Thread {
     private static final int TIMEOUT = 250;
     private ArrayList<String> servidores;
     private int porta;
@@ -50,6 +50,10 @@ public class Coordenador {
                     temposServidores.add(ByteBuffer.wrap(pacoteReceber.getData()).getLong());
                 } catch (InterruptedIOException e) {
                     todosPacotesRecebidos = false;
+                    System.out.println("Erro na comunicação com o servidor: " + servidores.get(i) + ". Tentando nova execução...");
+                    try {
+                        sleep(1000L);
+                    } catch (InterruptedException ex) {}
                 }
             }
         } while(!todosPacotesRecebidos);
@@ -81,7 +85,11 @@ public class Coordenador {
                 socket.receive(pacoteReceber);
                 tempos.set(i, tempos.get(i) + desvio);
             } catch (InterruptedIOException e) {
+                System.out.println("Mensagem de tempo ajustado não recebida do servidor: " + servidores.get(i) + ". Reenviando o tempo...");
                 --i;
+                try {
+                    sleep(1000L);
+                } catch (InterruptedException ex) {}
             }
         }
         socket.close();
@@ -96,7 +104,7 @@ public class Coordenador {
         System.out.println("Coordenador: " + coordenadorIP + " Tempo: " + tempos.get(tempos.size() - 1) + " Data: " + new Date(tempos.get(tempos.size() - 1)));
         for (int i = 0; i < servidores.size(); ++i) {
             long tempo = tempos.get(i);
-            System.out.println("Escravo: " + servidores.get(i) + " Tempo: " + tempo + " Data: " + new Date(tempo));
+            System.out.println("Escravo:     " + servidores.get(i) + " Tempo: " + tempo + " Data: " + new Date(tempo));
         }
     }
 }
